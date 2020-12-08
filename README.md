@@ -1,6 +1,6 @@
 # NeRD: Neural Reflectance Decomposition from Image Collections
 
-### [Project Page](https://markboss.me/publication/2021-nerd/) | [Video](https://youtu.be/JL-qMTXw9VU) | [Paper](https://arxiv.org/abs/2012.03918)
+### [Project Page](https://markboss.me/publication/2021-nerd/) | [Video](https://youtu.be/JL-qMTXw9VU) | [Paper](https://markboss.me/files/2020-NeRD.pdf)
 
 Implementation for NeRD. A novel method which decomposes multiple images into shape, BRDF and illumination.
 <br><br>

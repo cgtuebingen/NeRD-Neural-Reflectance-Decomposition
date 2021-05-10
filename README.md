@@ -13,8 +13,11 @@ Implementation for NeRD. A novel method which decomposes multiple images into sh
 
 ## Datasets
 
-All datasets are released in seperate git repositories. We have created a [download script](download_datasets.py) which automatically fetches all datasets and download them to a specified folder.
+All datasets are uploaded in individual git repositories. We have created a [download script](download_datasets.py) which automatically fetches all datasets and downloads them to a specified folder. Usage: 
 
+```shell
+python download_datasets.py /path/to/dataset/root
+```
 
 ## Citation
 

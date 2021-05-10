@@ -1,6 +1,6 @@
 # NeRD: Neural Reflectance Decomposition from Image Collections
 
-### [Project Page](https://markboss.me/publication/2021-nerd/) | [Video](https://youtu.be/JL-qMTXw9VU) | [Paper](https://arxiv.org/abs/2012.03918)
+### [Project Page](https://markboss.me/publication/2021-nerd/) | [Video](https://youtu.be/JL-qMTXw9VU) | [Paper](https://arxiv.org/abs/2012.03918) | [Dataset](download_datasets.py)
 
 Implementation for NeRD. A novel method which decomposes multiple images into shape, BRDF and illumination.
 <br><br>
@@ -13,7 +13,7 @@ Implementation for NeRD. A novel method which decomposes multiple images into sh
 
 ## Datasets
 
-Soon
+All datasets are released in seperate git repositories. We have created a [download script](download_datasets.py) which automatically fetches all datasets and download them to a specified folder.
 
 
 ## Citation

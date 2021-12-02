@@ -1,0 +1,19 @@
+batch_size = 1024
+learning_rate = 1e-4
+lrate_decay = 250
+
+direct_rgb = True
+
+jitter_coords = True
+dataset_type = nerf_blender
+single_env = True
+
+epochs = 300
+steps_per_epoch = 1000
+
+weights_epoch = 10
+validation_epoch = 5
+testset_epoch = 300
+video_epoch = 300
+
+testskip = 8

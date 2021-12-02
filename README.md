@@ -12,6 +12,14 @@ Implementation for NeRD. A novel method which decomposes multiple images into sh
 
 **Also check our follow-up work: [Neural-PIL](https://github.com/cgtuebingen/Neural-PIL)**
 
+## Setup
+
+A conda environment is used for dependency management
+
+```
+conda env create -f environment.yml
+conda activate nerd
+```
 ## Running
 
 Replace the specific `[]` placeholders:
@@ -26,7 +34,7 @@ Most setup is handled by configurations files located in [configs/nerd/](configs
 #### Our Synthethic Scenes
 
 ```
---config configs/nerd/blender.txt --half_res
+--config configs/nerd/blender.txt
 ```
 
 #### NeRF Synthethic Scenes
@@ -37,29 +45,12 @@ Most setup is handled by configurations files located in [configs/nerd/](configs
 
 #### Real-World
 
-**MotherChild**
-
 ```
---config configs/nerd/real_world.txt --spherify --rwfactor 8 --near 2 --far 0.25
+--config configs/nerd/real_world.txt 
 ```
 
-**Gnome**
+Often objects are captured in a spherical manner and the flag `--spherify` should be applied for those scenes.
 
-```
---config configs/nerd/real_world.txt --spherify --rwfactor 8
-```
-
-**EthiopianHead**
-
-```
---config configs/nerd/real_world.txt --spherify --single_env --rotating_object --rwfactor 8
-```
-
-**GoldCape**
-
-```
---config configs/nerd/real_world.txt --spherify --single_env --rwfactor 8
-```
 ## Datasets
 
 All datasets are uploaded in individual git repositories. We have created a [download script](download_datasets.py) which automatically fetches all datasets and downloads them to a specified folder. Usage: 
@@ -84,6 +75,10 @@ poses_bounds.npy
 ```
 
 The `poses_bounds.npy` is generated from the [LLFF script](https://github.com/bmild/nerf#dont-have-poses).
+
+## Evaluation
+
+The [train_nerd.py](train_nerd.py) can be called with a `--render_only` flag and the `--config` flag pointing to the `args.txt` of the experiments folder.
 ## Citation
 
 ```

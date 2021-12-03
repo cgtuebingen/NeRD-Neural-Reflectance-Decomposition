@@ -17,7 +17,7 @@ dependencies:
     - openexr-python
     - pip:
           - pyexr==0.3.8
-          - tensorflow==2.6.0
+          - tensorflow==2.6.2
           - tensorflow-addons==0.14.0
           - opencv-python==4.4.0.42
           - scipy

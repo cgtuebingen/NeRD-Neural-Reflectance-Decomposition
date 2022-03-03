@@ -52,7 +52,7 @@ def find_files_to_copy(toCheck, base_path="./"):
     with open(toCheck, "r") as pyFile:
         for line in pyFile:
             # ignore comments
-            line = line.strip().partition("#")[0].partition("as")[0].split(" ")
+            line = line.strip().partition("#")[0].partition(" as ")[0].split(" ")
 
             if line[0] == "import" or line[0] == "from":
                 if line[1] in modulify:

@@ -208,7 +208,7 @@ def volumetric_rendering(
     accum_prod = tf.concat(
         [
             tf.ones_like(alpha[..., :1], alpha.dtype),
-            tf.math.cumprod(1.0 - alpha[..., :-1] + eps, axis=-1, exclusive=True),
+            tf.math.cumprod(1.0 - alpha[..., :-1] + eps, axis=-1),
         ],
         -1,
     )

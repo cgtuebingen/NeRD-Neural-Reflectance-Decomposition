@@ -78,7 +78,7 @@ The `poses_bounds.npy` is generated from the [LLFF script](https://github.com/bm
 
 ## Evaluation
 
-The [train_nerd.py](train_nerd.py) can be called with a `--render_only` flag and the `--config` flag pointing to the `args.txt` of the experiments folder.
+The [train_nerd.py](train_nerd.py) can be called with a `--render_only` flag and the `--config` flag pointing to the `args.txt` of the experiments folder. The SGs can be converted to regular environment maps with the `visualize_fit` function in [nn_utils/sg_rendering.py](nn_utils/sg_rendering.py) (Example in [train_nerd.py](train_nerd.py#L631)).
 ## Citation
 
 ```

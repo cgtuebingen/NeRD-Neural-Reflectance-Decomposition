@@ -272,11 +272,7 @@ def cartesian_to_spherical(vec: tf.Tensor) -> tf.Tensor:
 
 def spherical_to_uv(spherical: tf.Tensor) -> tf.Tensor:
     # Turst no one
-    theta = tf.clip_by_value(
-        spherical[..., 0],
-        0,
-        2 * np.pi - EPS,
-    )  # [0, 2pi)
+    theta = tf.clip_by_value(spherical[..., 0], 0, 2 * np.pi - EPS,)  # [0, 2pi)
     phi = tf.clip_by_value(spherical[..., 1], 0, np.pi)  # [0, pi]
 
     u = theta / (2 * np.pi)  # TODO this might be a np.fliplr candidate
@@ -295,11 +291,7 @@ def uv_to_spherical(uvs: tf.Tensor) -> tf.Tensor:
     u = tf.clip_by_value(uvs[..., 0], 0, 1)  # TODO this might be a np.fliplr candidate
     v = tf.clip_by_value(uvs[..., 1], 0, 1)
 
-    theta = tf.clip_by_value(
-        (2 * u * np.pi),
-        0,
-        2 * np.pi - EPS,
-    )  # [-pi, pi)
+    theta = tf.clip_by_value((2 * u * np.pi), 0, 2 * np.pi - EPS,)  # [-pi, pi)
     phi = tf.clip_by_value(np.pi * v, 0, np.pi)  # [0, pi]
 
     return tf.stack([theta, phi], -1)

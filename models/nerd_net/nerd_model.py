@@ -389,8 +389,8 @@ class NerdModel(tf.keras.Model):
         ray_origins: tf.Tensor,
         ray_directions: tf.Tensor,
         camera_pose: tf.Tensor,
-        near_bound,
-        far_bound,
+        near_bound: float,
+        far_bound: float,
         sg_illumination_idx: tf.Tensor,
         ev100: tf.Tensor,
         optimizer: tf.keras.optimizers.Optimizer,
@@ -435,21 +435,35 @@ class NerdModel(tf.keras.Model):
             False,
         )
 
-        dp_df = tf.data.Dataset.from_tensor_slices(
-            (
-                ray_directions,
-                target,
-                fine_result["basecolor"],
-                fine_result["metallic"],
-                fine_result["roughness"],
-                fine_result["normal"],
-                fine_result["acc_alpha"][..., None],
+        dp_df = (
+            tf.data.Dataset.from_tensor_slices(
+                (
+                    ray_directions,
+                    target,
+                    fine_result["basecolor"],
+                    fine_result["metallic"],
+                    fine_result["roughness"],
+                    fine_result["normal"],
+                    fine_result["acc_alpha"][..., None],
+                )
             )
-        ).batch(chunk_size * get_num_gpus())
+            .shuffle(chunk_size * 2, reshuffle_each_iteration=True)
+            .batch(chunk_size * get_num_gpus())
+        )
         dp_dist_df = strategy.experimental_distribute_dataset(dp_df)
+
+        self.sgs_store.apply_whitebalance_to_idx(
+            sg_illumination_idx,
+            tf.constant([[0.8, 0.8, 0.8]], dtype=tf.float32),
+            ray_origins,
+            ev100,
+            clip_range=None,
+            grayscale=True,
+        )
 
         for i in tf.range(steps):
             total_loss = 0
+
             for dp in dp_dist_df:
                 ray_d, trgt, bcol, mtl, rgh, nrm, alp = dp
                 illum_loss_per_replica = strategy.run(

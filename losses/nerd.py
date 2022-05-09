@@ -55,20 +55,22 @@ def segmentation_mask_loss(global_batch_size=None):
     def call(individual_alpha, acc_alpha, mask, fg_scaler=1):
         # The background loss punishes all values directly
         loss_background = tf.reduce_sum(
-            tf.square(individual_alpha - mask), -1, keepdims=True
+            tf.abs(individual_alpha - mask), -1, keepdims=True
         )
 
         # In the foreground we do not know where information should be placed
         loss_foreground = (
-            tf.square(acc_alpha - mask) if fg_scaler > 0 else tf.zeros_like(mask)
+            tf.abs(acc_alpha - mask) if fg_scaler > 0 else tf.zeros_like(mask)
         )
+
+        mask_binary = tf.where(mask > 0.5, tf.ones_like(mask), tf.zeros_like(mask))
 
         return (
             tf.reduce_sum(
                 tf.where(
-                    (1 - mask) > 0.5,
-                    loss_background * (1 - mask),
-                    loss_foreground * mask * fg_scaler,
+                    mask > 0.5,
+                    loss_foreground * mask_binary * fg_scaler,
+                    loss_background * (1 - mask_binary),
                 )
             )
             / global_batch_size

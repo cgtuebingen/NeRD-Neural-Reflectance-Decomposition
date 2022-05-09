@@ -678,7 +678,7 @@ class NerdFineModel(tf.keras.Model):
             brdf_embedding_loss = self.brdf_encoder.get_kernel_regularization()
 
         final_loss = (
-            image_loss * tf.maximum(inverse_color, 0.1)
+            image_loss * tf.maximum(inverse_color, 0.01)
             + alpha_loss * inverse_advanced
             + direct_img_loss * lambda_color_loss
             + brdf_embedding_loss

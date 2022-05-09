@@ -21,11 +21,6 @@ def hdr_to_tb(name, data):
     tf.summary.image(
         name,
         tf.clip_by_value(  # Just for safety
-            tf.math.pow(
-                data / (tf.ones_like(data) + data),
-                1.0 / 2.2,
-            ),
-            0,
-            1,
+            tf.math.pow(data / (tf.ones_like(data) + data), 1.0 / 2.2,), 0, 1,
         ),  # Reinhard tone mapping
     )

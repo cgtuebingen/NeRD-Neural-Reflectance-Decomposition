@@ -12,10 +12,7 @@ from utils.training_setup_utils import get_num_gpus
 
 def add_args(parser):
     parser.add_argument(
-        "--datadir",
-        required=True,
-        type=str,
-        help="Path to dataset location.",
+        "--datadir", required=True, type=str, help="Path to dataset location.",
     )
 
     parser.add_argument(
@@ -150,9 +147,7 @@ def pick_correct_dataset(args):
         far = args.far if args.far is not None else 6
     elif args.dataset_type == "real_world":
         (images, masks, ev100s, poses, bds, render_poses, i_test,) = load_llff_data(
-            basedir=args.datadir,
-            factor=args.rwfactor,
-            spherify=args.spherify,
+            basedir=args.datadir, factor=args.rwfactor, spherify=args.spherify,
         )
 
         hwf = poses[0, :3, -1]
@@ -325,13 +320,7 @@ def dataflow(
     dataflow = (
         base_dataflow.map(
             lambda idx, dp: (
-                math_utils.repeat(
-                    idx[
-                        None,
-                    ],
-                    num_gpus if is_train else 1,
-                    0,
-                ),
+                math_utils.repeat(idx[None,], num_gpus if is_train else 1, 0,),
                 *build_rays(
                     hwf,
                     dp["image"],

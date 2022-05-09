@@ -35,7 +35,7 @@ def parse_args():
         "--env_height",
         type=int,
         default=128,
-        help="Height of environment map used for optimization"
+        help="Height of environment map used for optimization",
     )
 
     parser.add_argument(
@@ -106,11 +106,9 @@ def fit_sgs(
     optimizer = tf.keras.optimizers.Adam(1e-2)
     bar = tqdm(range(steps), desc="lobes: {}".format(num_sgs))
     for _ in bar:
-        loss, sg_envmap = optimize(
-            sgs_tf, directions, env_map, optimizer, sg_render
-        )
+        loss, sg_envmap = optimize(sgs_tf, directions, env_map, optimizer, sg_render)
         bar.set_postfix({"loss": loss.numpy()})
-    
+
     total_time = time.time() - start_time
     print("Fitting took", total_time)
 
@@ -139,9 +137,7 @@ def main():
     )
     sg_render = SgRenderer()
 
-    fit_sgs(
-        env_map, directions, args.num_sgs, args.steps, sg_render, args.out_path
-    )
+    fit_sgs(env_map, directions, args.num_sgs, args.steps, sg_render, args.out_path)
 
 
 if __name__ == "__main__":

@@ -301,13 +301,9 @@ def setup_fixed_grid_sampling(
     # Decide where to sample along each ray.
     # Under the logic, all rays will be sampled at the same times.
     # Ensure the sample values match with the ray origin's shape
-    t_vals = (
-        tf.reshape(
-            tf.linspace(0.0, 1.0, num_samples),
-            (*[1 for _ in rays_origin.shape[:-1]], -1),
-        )
-        * tf.ones_like(rays_origin[..., :1])
-    )
+    t_vals = tf.reshape(
+        tf.linspace(0.0, 1.0, num_samples), (*[1 for _ in rays_origin.shape[:-1]], -1),
+    ) * tf.ones_like(rays_origin[..., :1])
 
     # Add sample dimension
     near_bound = tf.expand_dims(near_bound * tf.ones_like(t_vals[..., 0]), -1)
@@ -494,11 +490,7 @@ def add_gaussian_noise(raw, noise_std, randomized):
 
 
 def get_full_image_eval_grid(
-    H: int,
-    W: int,
-    focal: float,
-    c2w: tf.Tensor,
-    jitter: Optional[tf.Tensor] = None,
+    H: int, W: int, focal: float, c2w: tf.Tensor, jitter: Optional[tf.Tensor] = None,
 ) -> Tuple[tf.Tensor, tf.Tensor]:
     """Get ray origins, directions from a pinhole camera.
 

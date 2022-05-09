@@ -60,13 +60,7 @@ class SgsStore(tf.keras.layers.Layer):
 
     @tf.function
     def apply_whitebalance_to_idx(
-        self,
-        idx,
-        wb_value,
-        rays_o,
-        ev100,
-        clip_range=(0.99, 1.01),
-        grayscale=False,
+        self, idx, wb_value, rays_o, ev100, clip_range=(0.99, 1.01), grayscale=False,
     ):
         if self.num_samples == 1:
             idx = tf.convert_to_tensor(0, tf.int32)

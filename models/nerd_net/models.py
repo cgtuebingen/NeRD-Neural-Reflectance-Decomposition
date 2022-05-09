@@ -42,8 +42,7 @@ class SgsCondenseModel(tf.keras.Model):
             sgs = tf.reshape(sgs, [-1, 24, 7])
             # This is not a per channel norm
             normAmpl = sgs[..., :3] / tf.maximum(
-                tf.reduce_max(sgs[..., :3], -1, keepdims=True),
-                1e-3,
+                tf.reduce_max(sgs[..., :3], -1, keepdims=True), 1e-3,
             )
             sgs = tf.concat([normAmpl, sgs[..., 3:]], -1)
 
@@ -74,12 +73,7 @@ class NerdCoarseModel(tf.keras.Model):
         ]
         # Then add the main layers
         for _ in range(args.net_depth // 2):
-            main_net.append(
-                tf.keras.layers.Dense(
-                    args.net_width,
-                    activation="relu",
-                )
-            )
+            main_net.append(tf.keras.layers.Dense(args.net_width, activation="relu",))
         # Build network stack
         self.main_net_first = tf.keras.Sequential(main_net)
 
@@ -89,12 +83,7 @@ class NerdCoarseModel(tf.keras.Model):
             ),
         ]
         for _ in range(args.net_depth // 2):
-            main_net.append(
-                tf.keras.layers.Dense(
-                    args.net_width,
-                    activation="relu",
-                )
-            )
+            main_net.append(tf.keras.layers.Dense(args.net_width, activation="relu",))
         self.main_net_second = tf.keras.Sequential(main_net)
 
         # Sigma is a own output not conditioned on the illumination
@@ -122,12 +111,9 @@ class NerdCoarseModel(tf.keras.Model):
         self.num_gpu = max(1, get_num_gpus())
         self.global_batch_size = args.batch_size * self.num_gpu
         self.mse = multi_gpu_wrapper(
-            tf.keras.losses.MeanSquaredError,
-            self.global_batch_size,
+            tf.keras.losses.MeanSquaredError, self.global_batch_size,
         )
-        self.alpha_loss = segmentation_mask_loss(
-            self.global_batch_size,
-        )
+        self.alpha_loss = segmentation_mask_loss(self.global_batch_size,)
 
     def payload_to_parmeters(
         self, raymarched_payload: tf.Tensor
@@ -357,12 +343,7 @@ class NerdFineModel(tf.keras.Model):
         ]
         # Then add the main layers
         for _ in range(args.net_depth // 2):
-            main_net.append(
-                tf.keras.layers.Dense(
-                    args.net_width,
-                    activation="relu",
-                )
-            )
+            main_net.append(tf.keras.layers.Dense(args.net_width, activation="relu",))
         # Build network stack
         self.main_net_first = tf.keras.Sequential(main_net)
 
@@ -372,12 +353,7 @@ class NerdFineModel(tf.keras.Model):
             ),
         ]
         for _ in range(args.net_depth // 2):
-            main_net.append(
-                tf.keras.layers.Dense(
-                    args.net_width,
-                    activation="relu",
-                )
-            )
+            main_net.append(tf.keras.layers.Dense(args.net_width, activation="relu",))
         self.main_net_second = tf.keras.Sequential(main_net)
 
         # Add a final layer for the main net which predicts sigma plus eventual
@@ -574,8 +550,7 @@ class NerdFineModel(tf.keras.Model):
 
         # Ensure the raymarched normal is still normalized
         payload["normal"] = math_utils.white_background_compose(
-            math_utils.normalize(payload["normal"]),
-            payload["acc_alpha"][:, None],
+            math_utils.normalize(payload["normal"]), payload["acc_alpha"][:, None],
         )
 
         if not skip_rendering:
@@ -593,8 +568,7 @@ class NerdFineModel(tf.keras.Model):
                 view_dir=view_direction,
             )
             tf.debugging.check_numerics(
-                rgb_render,
-                "output Re-render: {}".format(tf.math.is_nan(rgb_render)),
+                rgb_render, "output Re-render: {}".format(tf.math.is_nan(rgb_render)),
             )
             payload["hdr_rgb"] = rgb_render
             payload["rgb"] = math_utils.white_background_compose(
@@ -678,7 +652,7 @@ class NerdFineModel(tf.keras.Model):
             brdf_embedding_loss = self.brdf_encoder.get_kernel_regularization()
 
         final_loss = (
-            image_loss * tf.maximum(inverse_color, 0.1)
+            image_loss * tf.maximum(inverse_color, 0.01)
             + alpha_loss * inverse_advanced
             + direct_img_loss * lambda_color_loss
             + brdf_embedding_loss

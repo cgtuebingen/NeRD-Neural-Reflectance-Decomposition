@@ -31,16 +31,10 @@ def add_args(parser):
         help="render validation every x epochs",
     )
     parser.add_argument(
-        "--testset_epoch",
-        type=int,
-        default=300,
-        help="render testset every x epochs",
+        "--testset_epoch", type=int, default=300, help="render testset every x epochs",
     )
     parser.add_argument(
-        "--video_epoch",
-        type=int,
-        default=300,
-        help="render video every x epochs",
+        "--video_epoch", type=int, default=300, help="render video every x epochs",
     )
 
     parser.add_argument(
@@ -56,13 +50,7 @@ def add_args(parser):
 
 
 def parse_args():
-    parser = add_args(
-        data.add_args(
-            NerdModel.add_args(
-                train_utils.setup_parser(),
-            ),
-        ),
-    )
+    parser = add_args(data.add_args(NerdModel.add_args(train_utils.setup_parser(),),),)
     return train_utils.parse_args_file_without_nones(parser)
 
 
@@ -376,8 +364,7 @@ def main(args):
                         ]
 
                         pbar.add(
-                            1,
-                            values=losses_for_pbar,
+                            1, values=losses_for_pbar,
                         )
 
                         # Log to tensorboard
@@ -502,10 +489,7 @@ def main(args):
                     args.expname,
                     "video_{:06d}".format(tf.summary.experimental.get_step()),
                 )
-                video_img_dir = os.path.join(
-                    video_dir,
-                    "images",
-                )
+                video_img_dir = os.path.join(video_dir, "images",)
                 os.makedirs(video_img_dir, exist_ok=True)
 
                 render_video(
@@ -668,14 +652,7 @@ def render_video(
 
         def render_sgs(rays_o, rays_d, fres, sgs):
             tf.debugging.assert_shapes(
-                [
-                    (rays_o, (H, W, 3)),
-                    (rays_d, (H, W, 3)),
-                    (
-                        sgs,
-                        (1, 24, 7),
-                    ),
-                ]
+                [(rays_o, (H, W, 3)), (rays_d, (H, W, 3)), (sgs, (1, 24, 7),),]
             )
 
             view_direction = math_utils.normalize(-1 * tf.reshape(rays_d, (-1, 3)))
@@ -760,17 +737,7 @@ def render_video(
 
 
 def render_test_example(dp, hwf, nerd, near, far, strategy):
-    (
-        img_idx,
-        _,
-        _,
-        pose,
-        _,
-        ev100,
-        _,
-        _,
-        _,
-    ) = dp
+    (img_idx, _, _, pose, _, ev100, _, _, _,) = dp
 
     H, W, F = hwf
     rays_o, rays_d = get_full_image_eval_grid(H, W, F, pose[0])

@@ -8,8 +8,8 @@ import PIL.Image
 import utils.exif_helper as ehelp
 from utils.exposure_helper import calculate_ev100_from_metadata
 
-########## Slightly modified version of LLFF data loading code
-##########  see https://github.com/Fyusion/LLFF for original
+# Slightly modified version of LLFF data loading code
+# see https://github.com/Fyusion/LLFF for original
 
 
 def _minify(basedir, factors=[], resolutions=[]):
@@ -287,10 +287,10 @@ def recenter_poses(poses):
 
 
 def spherify_poses(poses, bds):
-
-    p34_to_44 = lambda p: np.concatenate(
-        [p, np.tile(np.reshape(np.eye(4)[-1, :], [1, 1, 4]), [p.shape[0], 1, 1])], 1
-    )
+    def p34_to_44(p):
+        return np.concatenate(
+            [p, np.tile(np.reshape(np.eye(4)[-1, :], [1, 1, 4]), [p.shape[0], 1, 1])], 1
+        )
 
     rays_d = poses[:, :3, 2:3]
     rays_o = poses[:, :3, 3:4]
@@ -358,16 +358,10 @@ def spherify_poses(poses, bds):
 
 
 def load_llff_data(
-    basedir,
-    factor=8,
-    recenter=True,
-    bd_factor=0.75,
-    spherify=False,
-    path_zflat=False,
+    basedir, factor=8, recenter=True, bd_factor=0.75, spherify=False, path_zflat=False,
 ):
     poses, bds, imgs, msks, ev100s = _load_data(
-        basedir,
-        factor=factor,
+        basedir, factor=factor,
     )  # factor=8 downsamples original imgs by 8x
     print("Loaded", basedir, bds.min(), bds.max())
 
@@ -397,7 +391,7 @@ def load_llff_data(
         print("recentered", c2w.shape)
         print(c2w[:3, :4])
 
-        ## Get spiral
+        # Get spiral
         # Get average pose
         up = normalize(poses[:, :3, 1].sum(0))
 

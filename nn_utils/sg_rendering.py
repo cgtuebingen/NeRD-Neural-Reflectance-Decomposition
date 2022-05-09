@@ -56,12 +56,7 @@ class SgRenderer(tf.keras.layers.Layer):
 
             # Evaluate BRDF
             brdf = self._brdf_eval(
-                sg_illuminations,
-                diffuse,
-                specular,
-                roughness,
-                normal,
-                view_dir,
+                sg_illuminations, diffuse, specular, roughness, normal, view_dir,
             )
             # And sum the contributions
             brdf = tf.reduce_sum(brdf, 1)

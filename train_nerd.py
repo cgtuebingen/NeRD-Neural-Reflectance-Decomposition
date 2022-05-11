@@ -31,10 +31,16 @@ def add_args(parser):
         help="render validation every x epochs",
     )
     parser.add_argument(
-        "--testset_epoch", type=int, default=300, help="render testset every x epochs",
+        "--testset_epoch",
+        type=int,
+        default=300,
+        help="render testset every x epochs",
     )
     parser.add_argument(
-        "--video_epoch", type=int, default=300, help="render video every x epochs",
+        "--video_epoch",
+        type=int,
+        default=300,
+        help="render video every x epochs",
     )
 
     parser.add_argument(
@@ -50,7 +56,13 @@ def add_args(parser):
 
 
 def parse_args():
-    parser = add_args(data.add_args(NerdModel.add_args(train_utils.setup_parser(),),),)
+    parser = add_args(
+        data.add_args(
+            NerdModel.add_args(
+                train_utils.setup_parser(),
+            ),
+        ),
+    )
     return train_utils.parse_args_file_without_nones(parser)
 
 
@@ -87,20 +99,13 @@ def eval_datasets(
     # Go over validation dataset
     with strategy.scope():
         for dp in tqdm(df):
-            img_idx, rays_o, rays_d, pose, mask, ev100, _, _, target = dp
+            img_idx, rays_o, rays_d, pose, mask, _, _, _, target = dp
 
             gt_rgbs.append(tf.reshape(target, (H, W, 3)))
             gt_masks.append(tf.reshape(mask, (H, W, 1)))
 
             # Optimize SGs first - only if we have varying illumination
             if not is_single_env:
-                wb_input_value = tf.convert_to_tensor(
-                    [[0.8, 0.8, 0.8]], dtype=tf.float32
-                )
-                strategy.run(
-                    nerd.sgs_store.apply_whitebalance_to_idx,
-                    (img_idx, wb_input_value, rays_o, ev100),
-                )  # Start by actually ensuring the value range fits
                 sgs_loss = nerd.illumination_steps(
                     rays_o,
                     rays_d,
@@ -108,7 +113,6 @@ def eval_datasets(
                     near,
                     far,
                     img_idx,
-                    ev100,
                     sgs_optimizer,
                     target,
                     steps,
@@ -129,7 +133,7 @@ def eval_datasets(
                 near,
                 far,
                 img_idx,
-                ev100,
+                None,
                 training=False,
                 high_quality=True,
             )
@@ -364,7 +368,8 @@ def main(args):
                         ]
 
                         pbar.add(
-                            1, values=losses_for_pbar,
+                            1,
+                            values=losses_for_pbar,
                         )
 
                         # Log to tensorboard
@@ -489,7 +494,10 @@ def main(args):
                     args.expname,
                     "video_{:06d}".format(tf.summary.experimental.get_step()),
                 )
-                video_img_dir = os.path.join(video_dir, "images",)
+                video_img_dir = os.path.join(
+                    video_dir,
+                    "images",
+                )
                 os.makedirs(video_img_dir, exist_ok=True)
 
                 render_video(
@@ -652,7 +660,14 @@ def render_video(
 
         def render_sgs(rays_o, rays_d, fres, sgs):
             tf.debugging.assert_shapes(
-                [(rays_o, (H, W, 3)), (rays_d, (H, W, 3)), (sgs, (1, 24, 7),),]
+                [
+                    (rays_o, (H, W, 3)),
+                    (rays_d, (H, W, 3)),
+                    (
+                        sgs,
+                        (1, 24, 7),
+                    ),
+                ]
             )
 
             view_direction = math_utils.normalize(-1 * tf.reshape(rays_d, (-1, 3)))
@@ -737,7 +752,17 @@ def render_video(
 
 
 def render_test_example(dp, hwf, nerd, near, far, strategy):
-    (img_idx, _, _, pose, _, ev100, _, _, _,) = dp
+    (
+        img_idx,
+        _,
+        _,
+        pose,
+        _,
+        ev100,
+        _,
+        _,
+        _,
+    ) = dp
 
     H, W, F = hwf
     rays_o, rays_d = get_full_image_eval_grid(H, W, F, pose[0])

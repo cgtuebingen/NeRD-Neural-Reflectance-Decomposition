@@ -167,7 +167,10 @@ class NerdModel(tf.keras.Model):
 
         def add_to_dict(to_add, main_dict):
             for k, v in to_add.items():
-                arr = main_dict.get(k, [],)
+                arr = main_dict.get(
+                    k,
+                    [],
+                )
                 arr.extend(v)
                 main_dict[k] = arr
 
@@ -335,7 +338,6 @@ class NerdModel(tf.keras.Model):
         camera_pose,
         sg_illumination_idx,
         target,
-        ev100,
         mse,
         optimizer,
     ):
@@ -345,7 +347,8 @@ class NerdModel(tf.keras.Model):
             tape.watch(self.sgs_store.trainable_variables)
 
             sg = self.sgs_store(
-                sg_illumination_idx, camera_pose if self.rotating_object else None,
+                sg_illumination_idx,
+                camera_pose if self.rotating_object else None,
             )  # Receive latest sgs
 
             render = self.renderer(
@@ -360,7 +363,7 @@ class NerdModel(tf.keras.Model):
 
             # Auto exposure + srgb to model camera setup
             render = math_utils.white_background_compose(
-                self.fine_model.camera_post_processing(render, ev100), alpha
+                self.fine_model.camera_post_processing(render, None), alpha
             )
 
             sgs_loss = mse(
@@ -388,7 +391,6 @@ class NerdModel(tf.keras.Model):
         near_bound: float,
         far_bound: float,
         sg_illumination_idx: tf.Tensor,
-        ev100: tf.Tensor,
         optimizer: tf.keras.optimizers.Optimizer,
         target: tf.Tensor,
         steps: int,
@@ -405,7 +407,6 @@ class NerdModel(tf.keras.Model):
             near_bound (tf.Tensor(float32), [1]): the near clipping point.
             far_bound (tf.Tensor(float32), [1]): the far clipping point.
             sg_illumination_idx (tf.Tensor(int32), [1]): the illumination index.
-            ev100 (tf.Tensor(float32), [1]): the ev100 value of the image.
             optimizer (tf.keras.optimizers.Optimizer): the optimizer to use in the
                 train step.
             target (tf.Tensor(float32), [batch, 3]): the rgb target from the image.
@@ -427,7 +428,7 @@ class NerdModel(tf.keras.Model):
             near_bound,
             far_bound,
             sg_illumination_idx,
-            ev100,
+            None,
             False,
         )
 
@@ -448,15 +449,6 @@ class NerdModel(tf.keras.Model):
         )
         dp_dist_df = strategy.experimental_distribute_dataset(dp_df)
 
-        self.sgs_store.apply_whitebalance_to_idx(
-            sg_illumination_idx,
-            tf.constant([[0.8, 0.8, 0.8]], dtype=tf.float32),
-            ray_origins,
-            ev100,
-            clip_range=None,
-            grayscale=True,
-        )
-
         for i in tf.range(steps):
             total_loss = 0
 
@@ -474,7 +466,6 @@ class NerdModel(tf.keras.Model):
                         camera_pose[:1],
                         sg_illumination_idx[:1],
                         trgt,
-                        ev100,
                         mse,
                         optimizer,
                     ),

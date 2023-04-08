@@ -25,7 +25,7 @@ conda activate nerd
 Replace the specific `[]` placeholders:
 
 ```
-python nerd.py --datadir [DIR_TO_DATASET_FOLDER] --basedir [TRAIN_DIR] --expname [EXPERIMENT_NAME] --gpu [COMMA_SEPARATED_GPU_LIST]
+python train_nerd.py --datadir [DIR_TO_DATASET_FOLDER] --basedir [TRAIN_DIR] --expname [EXPERIMENT_NAME] --gpu [COMMA_SEPARATED_GPU_LIST]
 ```
 
 ### Specific Arguments per Dataset
